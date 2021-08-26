@@ -19,7 +19,7 @@ def vaccination_lastest_date_by_country(dataframe):
   '''group the data by location and get last date data'''
   return dataframe.groupby('location').last().reset_index()
 
-vaccination_data = pd.read_csv('vaccinations.csv')
+vaccination_data = pd.read_csv('.streamlit/vaccinations.csv')
 df = pd.DataFrame(vaccination_data)
 
 country_lastest_vaccination = vaccination_lastest_date_by_country(df)
