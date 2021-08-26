@@ -1,1 +1,1 @@
-web: sh setup.sh && streamlit run viccination.py
+web: sh setup.sh && streamlit run vaccination.py
