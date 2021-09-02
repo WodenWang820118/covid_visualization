@@ -42,11 +42,11 @@ def vaccination_lastest_date_by_country(dataframe):
 
 # data parsing
 # vaccination data
-vaccination_data = pd.read_csv('vaccinations.csv')
+vaccination_data = pd.read_csv('data/vaccinations.csv')
 df = pd.DataFrame(vaccination_data)
 
 # imf vaccine secured data
-imf_data = pd.read_csv('imf-who-covid-19-vaccine-supply-tracker.csv',skiprows=2, engine='python')
+imf_data = pd.read_csv('data/imf-who-covid-19-vaccine-supply-tracker.csv',skiprows=2, engine='python')
 df_imf = pd.DataFrame(imf_data)
 
 ############################ choropleth map section ############################
