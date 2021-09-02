@@ -9,7 +9,9 @@ import numpy as np
 import streamlit as st
 import streamlit.components.v1 as components
 from vaccination_explain import vaccination_explanation
-from os.path import abspath
+
+# TODO: font family -> 細字 黑體 Myriad Pro 華康中黑體(P)
+# TODO: reposition the legend, and the title
 
 ############################ settings ############################
 # set the page configuration at the beginning, then renders the content
@@ -40,13 +42,11 @@ def vaccination_lastest_date_by_country(dataframe):
 
 # data parsing
 # vaccination data
-vaccination_file = abspath('../data/vaccinations.csv')
-vaccination_data = pd.read_csv(vaccination_file)
+vaccination_data = pd.read_csv('vaccinations.csv')
 df = pd.DataFrame(vaccination_data)
 
 # imf vaccine secured data
-imf_file = abspath('../data/imf-who-covid-19-vaccine-supply-tracker.csv')
-imf_data = pd.read_csv(imf_file,skiprows=2, engine='python')
+imf_data = pd.read_csv('imf-who-covid-19-vaccine-supply-tracker.csv',skiprows=2, engine='python')
 df_imf = pd.DataFrame(imf_data)
 
 ############################ choropleth map section ############################
