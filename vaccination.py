@@ -6,14 +6,15 @@
     has the highest vaccination doses per hundread, denoted as 'total_vaccinations_per_hundred'.
     Another part is the choropleth map with vaccination.
 '''
-
+import os
 import pandas as pd
 import plotly.express as px
 import streamlit as st
 import streamlit.components.v1 as components
 
 # TODO: fix the path specified to deploy and local use -> should take out the vaccination.py; remain the path of data; change the run in Procfile
-
+current_directory = os.getcwd()
+print(current_directory)
 # set the page configuration at the beginning, then renders the content
 st.set_page_config(layout="wide")
 
@@ -22,10 +23,10 @@ def vaccination_lastest_date_by_country(dataframe):
   '''group the data by location and get last date data'''
   return dataframe.groupby('location').last().reset_index()
 
-vaccination_data = pd.read_csv('vaccinations.csv')
+vaccination_data = pd.read_csv(current_directory +'\\vaccinations.csv')
 df = pd.DataFrame(vaccination_data)
 
-imf_data = pd.read_csv('imf-who-covid-19-vaccine-supply-tracker.csv',skiprows=2, engine='python')
+imf_data = pd.read_csv(current_directory + '\\imf-who-covid-19-vaccine-supply-tracker.csv',skiprows=2, engine='python')
 df_imf = pd.DataFrame(imf_data)
 
 country_lastest_vaccination = vaccination_lastest_date_by_country(df)
