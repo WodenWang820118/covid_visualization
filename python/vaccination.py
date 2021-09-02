@@ -11,9 +11,8 @@ import streamlit.components.v1 as components
 from vaccination_explain import vaccination_explanation
 
 ############################ settings ############################
-# TODO: see the html rendering, then decide what to do with this issue
 # set the page configuration at the beginning, then renders the content
-# st.set_page_config(layout="wide")
+st.set_page_config(layout="wide")
 
 # pylint: disable=W0311
 ############################ helper functions ############################
@@ -207,8 +206,8 @@ with col1:
                   .values[0].astype(np.int64)
 
   vaccine_per_population = np.round(vaccine_per_population, decimals=2)
-  st.write(f'secured vaccine per population: {vaccine_per_population}, rank: {vaccine_rank}')
-  # TODO: consistent decimal points and unit
+  st.write(f'secured vaccine: {vaccine_per_population} doses per person')
+  st.write(f'rank: {vaccine_rank}')
 
 ##### column 2 #####
 with col2:
@@ -219,8 +218,8 @@ with col2:
                       [df_vaccination_by_country['location']==selected_country]\
                       ['total_vaccination_per_hundred rank'].values[0].astype(np.int64)
 
-  st.write(f'vaccination rate: {country_vaccination}, rank: {vaccination_rank}')
-
+  st.write(f'vaccination rate: {country_vaccination}%')
+  st.write(f'rank: {vaccination_rank}')
 ##### column 3 #####
 with col3:
   # merge the data from owid-covid-data to imf data
@@ -233,7 +232,7 @@ with col3:
   country_fully_vaccination = df_imf[df_imf['location']==selected_country]\
                                 ['fully_vaccination_rate'].values[0]
 
-  country_fully_vaccination = np.round(country_fully_vaccination, decimals=2)
+  country_fully_vaccination = np.round(country_fully_vaccination, decimals=4)*100
 
   df_imf['fully_vaccination_rate rank'] = df_imf['fully_vaccination_rate']\
                                             .rank(method='max')
@@ -241,4 +240,5 @@ with col3:
                             ['fully_vaccination_rate rank']\
                             .values[0].astype(np.int64)
 
-  st.write(f'fully vaccination rate: {country_fully_vaccination}, rank: {fully_vaccination_rank}')
+  st.write(f'fully vaccination rate: {country_fully_vaccination}%')
+  st.write(f'rank: {fully_vaccination_rank}')
