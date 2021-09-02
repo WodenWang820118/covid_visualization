@@ -9,6 +9,7 @@ import numpy as np
 import streamlit as st
 import streamlit.components.v1 as components
 from vaccination_explain import vaccination_explanation
+import os
 
 ############################ settings ############################
 # set the page configuration at the beginning, then renders the content
