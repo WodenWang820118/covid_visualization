@@ -8,8 +8,9 @@ import plotly.express as px
 import numpy as np
 import streamlit as st
 import streamlit.components.v1 as components
-from vaccination_explain import vaccination_explanation
+from components.vaccination_explain import vaccination_explanation
 
+# TODO: write description
 # TODO: font family -> 細字 黑體 Myriad Pro 華康中黑體(P)
 # TODO: reposition the legend, and the title
 
@@ -51,7 +52,26 @@ df_imf = pd.DataFrame(imf_data)
 
 ############################ choropleth map section ############################
 # title
-st.title("COVID-19 vaccine doses administered per 100 people")
+# TODO: style the title to fit the designer's design
+# use the streamlit title and style it with inspecting the elements in the website
+# only can tweak the title with its id
+st.title("COVID-19")
+st.title("vaccine doses administered per 100 people")
+
+# TODO: bring the style and html to the separate file
+st.markdown(
+"""
+<style>
+#covid-19 {
+  font-size:100px;
+  margin:0;
+}
+#vaccine-doses-administered-per-100-people {
+  padding: 0px 0px 0px 5px;
+}
+</style>
+""", unsafe_allow_html=True)
+
 
 # TODO: highlight the country selected
 country_lastest_vaccination = vaccination_lastest_date_by_country(df)
@@ -72,7 +92,21 @@ fig_map = px.choropleth\
           hover_name="location",
           color_discrete_sequence=colors)
 
-fig_map.update_layout(autosize=False, width= 1200, height=800)
+fig_map.update_layout(
+  legend=dict(
+    orientation='h',
+    title_text="",
+    itemsizing="constant"),
+  width=1200, height=800,
+  font=dict(
+    family="Courier New, monospace",
+    size=20,
+    color="#7f7f7f"),
+  margin=dict(
+    l=0, r=0, t=0, b=0)
+  )
+
+
 st.plotly_chart(fig_map)
 
 ############################ sidebar section ############################
@@ -245,3 +279,11 @@ with col3:
 
   st.write(f'fully vaccination rate: {country_fully_vaccination}%')
   st.write(f'rank: {fully_vaccination_rank}')
+
+hide_streamlit_style = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
