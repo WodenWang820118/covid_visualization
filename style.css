@@ -1,0 +1,22 @@
+#MainMenu {
+  visibility: hidden;
+}            
+footer {
+  visibility: hidden;
+}
+
+#covid-19 {
+  font-size:100px;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+
+#vaccine-doses-administered-per-100-people {
+  padding: 0px 0px 0px 5px;
+}
+
+/* change the select box width */
+div[data-baseweb="select"]>div {
+  width: 50%;
+}
