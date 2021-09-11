@@ -6,8 +6,6 @@
 
 import plotly.express as px
 import streamlit as st
-import streamlit.components.v1 as components
-from components.vaccination_explain import vaccination_explanation
 import utils
 import pandas as pd
 import numpy as np
@@ -126,7 +124,6 @@ with vaccination1:
   # for the vaccination chart plotting
   vaccination_data = [total_vaccinations, people_vaccinated,people_fully_vaccinated, population]
 
-  # TODO: use the mardown to style the text
   vaccination_rate = f"""
   <p class="vaccination-rate"> {selected_country} vaccination rate is: {country_vaccination}% </p>
   <p class="vaccination-avg"> The world average: {vaccination_avg}% </p>
@@ -167,13 +164,12 @@ with vaccination2:
   <div>
     <p>
       The <strong>'people_fully_vaccinated'</strong> is the number of whom receive the full protection.
-      For example, 1 shot of J&J would be considered as 1. Two shots of Moderna would also be counted as 1.
     </p>
     <p>
-      The <strong>'people_vaccinated'</strong> is the number who receive at least one shot of vaccination.
+      The <strong>'people_vaccinated'</strong> is the number who receive at least one shot of vaccine.
     </p>
     <p>
-      The <strong>'total_vaccinations'</strong> is the number total doses of vaccination.
+      The <strong>'total_vaccinations'</strong> is the number total doses of vaccination taken in the country.
     </p>
   </div>
   """
