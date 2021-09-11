@@ -6,6 +6,8 @@ footer {
 }
 
 #covid-19 {
+  font-family:'Dancing Script', cursive;
+  font-weight: 100;
   font-size:100px;
   padding: 0;
   border: 0;
@@ -13,7 +15,19 @@ footer {
 }
 
 #vaccine-doses-administered-per-100-people {
-  padding: 0px 0px 0px 5px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 100;
+  padding: 0px 0px 0px 10px;
+}
+
+h1 {
+  font-family:'Montserrat', sans-serif;
+  font-weight: 100;
+}
+
+p {
+  font-family:'Montserrat', sans-serif;
+  font-size: 17px;
 }
 
 /* change the select box width */

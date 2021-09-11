@@ -3,57 +3,27 @@
     Author: Chien-Chih Wang
     description: REMEMBER TO WRITE
 """
-import pandas as pd
+
 import plotly.express as px
-import numpy as np
 import streamlit as st
 import streamlit.components.v1 as components
 from components.vaccination_explain import vaccination_explanation
+import utils
+import pandas as pd
+import numpy as np
 
 # TODO: write description
-# TODO: font family -> 細字 黑體 Myriad Pro 華康中黑體(P)
-# TODO: reposition the legend, and the title
+# TODO: put original dataframe in one of the page
+
+# pylint: disable=W0311
 
 ############################ settings ############################
 # set the page configuration at the beginning, then renders the content
 st.set_page_config(layout="wide")
 
-# pylint: disable=W0311
-############################ helper functions ############################
-# reference: https://waynestalk.com/en/python-choropleth-map-en/
-def group_vaccination(vaccination_percentage):
-  ''' group the vaccination_percentage into 6 classes '''
-  if vaccination_percentage < 40:
-    return f'{0}~{40}'
-  if vaccination_percentage < 80:
-    return f'{40}~{80}'
-  if vaccination_percentage < 120:
-    return f'{80}~{100}'
-  if vaccination_percentage < 160:
-    return f'{120}~{160}'
-  if vaccination_percentage < 200:
-    return f'{160}~{200}'
-  return f'{200} above'
+# check CSS for the font family, font weight, font size and other properties.
 
-def vaccination_lastest_date_by_country(dataframe):
-  """group the data by location and get last date data
-  """
-  return dataframe.groupby('location').last().reset_index()
-
-# reference: https://discuss.streamlit.io/t/creating-a-nicely-formatted-search-field/1804/2
-def local_css(file_name):
-  """import the css file, and use markdown to render
-  """
-  with open(file_name) as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-def get_selected_country(select_box):
-  return select_box
 ############################ data parsing ############################
-
-# apply css
-local_css("style.css")
-
 # data parsing
 # vaccination data
 vaccination_data = pd.read_csv('data/vaccinations.csv')
@@ -65,16 +35,15 @@ df_imf = pd.DataFrame(imf_data)
 
 ############################ data section ############################
 
+# TODO: the docstrings renders on the webpage. How to disable it?
 # """ This section wraps up the data manipulation
 # Originally, the data is processed in each section. It could be messy if the chart changes
 # orders, which might prone to errors.
 # """
 
-# TODO: separate the data manipulation and the webpage layout -> import the variable from the data file
-
 ##### choropleth map section #####
 # get the newsest date vaccination row by country
-country_lastest_vaccination = vaccination_lastest_date_by_country(df)
+country_lastest_vaccination = utils.vaccination_lastest_date_by_country(df)
 
 # get the dataframe for ranking
 df_vaccination_by_country = country_lastest_vaccination\
@@ -82,115 +51,17 @@ df_vaccination_by_country = country_lastest_vaccination\
 
 # group the vaccination rate into different group for 6 classes
 df_vaccination_by_country['doses administered per 100 people'] = df_vaccination_by_country\
-                                ['total_vaccinations_per_hundred'].apply(group_vaccination)
+                                ['total_vaccinations_per_hundred'].apply(utils.group_vaccination)
 
 ##### search bar #####
 # a list of countries, sorted alphabatically
 countries = df_vaccination_by_country.sort_values(by='location')['location'].tolist()
 
-# the selectbox takes the countries list; return a selected country string as a variable
-# TODO: how to bring the search bar down without breaking the data order?
-selected_country = st.selectbox('', countries, index=countries.index('Taiwan'))
-
-# get the specific country vaccination per hundred; for user interactions
-country_vaccination = df_vaccination_by_country\
-                      [df_vaccination_by_country['location']==selected_country]\
-                      ['total_vaccinations_per_hundred'].values[0]
-
-vaccination_avg = df_vaccination_by_country['total_vaccinations_per_hundred']\
-                    .mean().round(decimals=2)
-
-##### vaccination bar chart #####
-# rename the column for merging column data from another dataframe
-# merge the country name
-# for using the same country name across two datasets
-df_imf = df_imf.rename(columns={"ISO3":"iso_code"})
-df_country = df_vaccination_by_country[['location','iso_code']]
-df_imf = df_imf.merge(df_country, on='iso_code', how='inner')
-
-# vaccination calculation
-# total doses of vaccination
-total_vaccinations = df_vaccination_by_country\
-                    [df_vaccination_by_country['location']==selected_country]['total_vaccinations']
-
-# total counts of how many people get vaccinated
-people_vaccinated = df_vaccination_by_country\
-                    [df_vaccination_by_country['location']==selected_country]['people_vaccinated']
-
-# total counts of how many people get fully protected
-people_fully_vaccinated = df_vaccination_by_country\
-                          [df_vaccination_by_country['location']==selected_country]\
-                          ['people_fully_vaccinated']
-
-# get the specific population of a country
-population = df_imf[df_imf['location']==selected_country]['Population']
-
-# for the vaccination chart plotting
-data = [total_vaccinations, people_vaccinated,people_fully_vaccinated, population]
-
-##### secured vaccine bar chart #####
-# get the fully vaccinated and iso code columns to be merged to another dataset; calculate the ratio
-df_people_fully_vaccinated = df_vaccination_by_country[['people_fully_vaccinated','iso_code']]
-
-# merged to the imf dataset
-df_imf = df_imf.merge(df_people_fully_vaccinated, on='iso_code', how='inner')
-
-# calculate the fully vaccination rate column value
-df_imf['fully_vaccination_rate'] = df_imf['people_fully_vaccinated']/df_imf['Population']
-
-# get the specific country's fully vaccination rate
-country_fully_vaccination = df_imf[df_imf['location']==selected_country]\
-                              ['fully_vaccination_rate'].values[0]
-
-# format the number to be percent with 4 decimal pricision
-country_fully_vaccination = np.round(country_fully_vaccination, decimals=4)*100
-
-# get the rank of fully vaccination rate
-df_imf['fully_vaccination_rate rank'] = df_imf['fully_vaccination_rate']\
-                                          .rank(method='max')
-
-# get the specific country's fully vaccination rate rank
-fully_vaccination_rank = df_imf[df_imf['location']==selected_country]\
-                          ['fully_vaccination_rate rank']\
-                          .values[0].astype(np.int64)
-
-# rename the column and make the unit consistent
-df_imf = df_imf.rename\
-          (columns={"Secured Vaccine (millions of courses)": "Secured Vaccine (courses)"})
-
-# unit changes to 1 instead of 1 million
-df_imf['secured vaccine per population'] = df_imf["Secured Vaccine (courses)"]\
-                                              .apply(lambda x:x*1000000)/df_imf["Population"]
-
-# secured vaccine doses one people could take in their country
-# secured vaccine divided by population
-vaccine_per_population = df_imf[df_imf['location']==selected_country]\
-                          ['secured vaccine per population'].values[0]
-
-# calculate the (secured vaccine)/population rank
-df_imf['secured vaccine per population rank'] = df_imf['secured vaccine per population']\
-                                                  .rank(method='max')
-
-# get the specific country's secured vaccine per population rank
-vaccine_rank = df_imf[df_imf['location']==selected_country]\
-                ['secured vaccine per population rank']\
-                .values[0].astype(np.int64)
-
-# round the rank to the 2 decimals precision
-vaccine_per_population = np.round(vaccine_per_population, decimals=2)
-
-# calculate the total doses per hundred rank
-df_vaccination_by_country['total_vaccination_per_hundred rank'] = \
-    df_vaccination_by_country['total_vaccinations_per_hundred'].rank(method='max')
-
-# get the specific country's total doses per hundred rank
-vaccination_rank = df_vaccination_by_country\
-                    [df_vaccination_by_country['location']==selected_country]\
-                    ['total_vaccination_per_hundred rank'].values[0].astype(np.int64)
+# apply css
+utils.local_css("style.css")
 
 ############################ choropleth map section ############################
 
-# title
 st.title("COVID-19")
 st.title("vaccine doses administered per 100 people")
 
@@ -202,7 +73,7 @@ fig_map = px.choropleth\
           color="doses administered per 100 people",
           hover_name="location",
           color_discrete_sequence=colors)
-# TODO: consistent font family
+
 fig_map.update_layout(
   legend=dict(
     orientation='h', # type of the legend presented
@@ -211,9 +82,9 @@ fig_map.update_layout(
     y=0.11), # adjust the legend y-axis height
   width=1200, height=800, # define map size
   font=dict(
-    family="Courier New, monospace",
+    family="Roboto",
     size=20,
-    color="#7f7f7f"),
+    color="#293fe3"),
   margin=dict(
     l=0, r=0, t=0, b=0), # cut down the margin of the map
   dragmode=False # disable zoom in and out
@@ -229,24 +100,46 @@ st.sidebar.text("Menu")
 ############################ vaccination bar chart section ############################
 
 # TODO: rename the label to be without underscore
-# TODO: re-design the st.write() text
 
 vaccination1, vaccination2 = st.columns([1,2])
 
 with vaccination1:
   st.title("Select a Country")
-  # selected_country = st.selectbox('', countries, index=countries.index('Taiwan'))
-  st.text(f"{selected_country} vaccination rate is: {country_vaccination}%")
 
-  st.text(f"The world average: {vaccination_avg}%")
+  selected_country = st.selectbox('', countries, index=countries.index('Taiwan'))
+  country_vaccination = utils.get_country_vaccination_rate(df_vaccination_by_country, selected_country)
+  vaccination_avg = utils.get_country_vaccination_avg(df_vaccination_by_country)
+
+  ##### vaccination bar chart #####
+  # rename the column for merging column data from another dataframe
+  # merge the country name
+  # for using the same country name across two datasets
+  df_imf = df_imf.rename(columns={"ISO3":"iso_code"})
+  df_country = df_vaccination_by_country[['location','iso_code']]
+  df_imf = df_imf.merge(df_country, on='iso_code', how='inner')
+
+  total_vaccinations = utils.get_total_doses_vaccination(df_vaccination_by_country, selected_country)
+  people_vaccinated = utils.get_people_vaccination(df_vaccination_by_country, selected_country)
+  people_fully_vaccinated = utils.get_fully_vaccination(df_vaccination_by_country, selected_country)
+  population = utils.get_population(df_imf, selected_country)
+
+  # for the vaccination chart plotting
+  vaccination_data = [total_vaccinations, people_vaccinated,people_fully_vaccinated, population]
+
+  # TODO: use the mardown to style the text
+  vaccination_rate = f"""
+  <p class="vaccination-rate"> {selected_country} vaccination rate is: {country_vaccination}% </p>
+  <p class="vaccination-avg"> The world average: {vaccination_avg}% </p>
+  """
+  st.markdown(vaccination_rate, unsafe_allow_html=True)
 
 with vaccination2:
   # plot the bar chart
   # vaccination based on different definitions of vaccination
   individual_data = px.bar(
-    data,
+    vaccination_data,
     orientation='h',
-    text=data)
+    text=vaccination_data)
 
   # chart title
   st.title(f'{selected_country} vaccination by different categories')
@@ -261,40 +154,99 @@ with vaccination2:
     width=1000, height=300,
     showlegend=False,
     font=dict(
-        family="Courier New, monospace",
+        family="Roboto",
         size=18,
-        color="RebeccaPurple"
+        color="#293fe3"
       )
     )
   individual_data.update_traces(texttemplate='%{text:,}',marker_color='rgb(158,202,225)')
   st.plotly_chart(individual_data)
 
-  components.html(vaccination_explanation)
+  vaccination_explanation = \
+  """
+  <div>
+    <p>
+      The <strong>'people_fully_vaccinated'</strong> is the number of whom receive the full protection.
+      For example, 1 shot of J&J would be considered as 1. Two shots of Moderna would also be counted as 1.
+    </p>
+    <p>
+      The <strong>'people_vaccinated'</strong> is the number who receive at least one shot of vaccination.
+    </p>
+    <p>
+      The <strong>'total_vaccinations'</strong> is the number total doses of vaccination.
+    </p>
+  </div>
+  """
+  st.markdown(vaccination_explanation, unsafe_allow_html=True)
 
 ############################ vaccine secured and ranking section ############################
+
+##### secured vaccine bar chart #####
+# get the fully vaccinated and iso code columns to be merged to another dataset; calculate the ratio
+df_people_fully_vaccinated = df_vaccination_by_country[['people_fully_vaccinated','iso_code']]
+
+# merged to the imf dataset
+df_imf = df_imf.merge(df_people_fully_vaccinated, on='iso_code', how='inner')
+
+# calculate the fully vaccination rate column value
+df_imf['fully_vaccination_rate'] = df_imf['people_fully_vaccinated']/df_imf['Population']
+country_fully_vaccination_rate = utils.get_fully_vaccination_rate(df_imf, selected_country)
+
+# format the number to be percent with 4 decimal pricision
+country_fully_vaccination_rate = np.round(country_fully_vaccination_rate, decimals=4)*100
+
+# get the rank of fully vaccination rate
+df_imf['fully_vaccination_rate rank'] = df_imf['fully_vaccination_rate']\
+                                          .rank(method='max')
+fully_vaccination_rank = utils.get_fully_vaccination_rank(df_imf, selected_country)
+
+# rename the column and make the unit consistent
+df_imf = df_imf.rename\
+          (columns={"Secured Vaccine (millions of courses)": "Secured Vaccine (courses)"})
+
+secured_vaccine = utils.secured_vaccine_unit_change(df_imf, selected_country)
+
+df_imf['secured vaccine per population'] = df_imf["Secured Vaccine (courses)"]\
+                                              .apply(lambda x:x*1000000)/df_imf["Population"]
+
+# secured vaccine doses one people could take in their country
+# secured vaccine divided by population
+vaccine_per_population = utils.get_vaccination_per_country(df_imf, selected_country)
+
+# calculate the (secured vaccine)/population rank
+df_imf['secured vaccine per population rank'] = df_imf['secured vaccine per population']\
+                                                  .rank(method='max')
+
+vaccine_rank = utils.get_vaccination_per_country_rank(df_imf, selected_country)
+
+# round the rank to the 2 decimals precision
+vaccine_per_population = np.round(vaccine_per_population, decimals=2)
+
+# calculate the total doses per hundred rank
+df_vaccination_by_country['total_vaccination_per_hundred rank'] = \
+    df_vaccination_by_country['total_vaccinations_per_hundred'].rank(method='max')
+
+vaccination_rank = utils.get_total_vaccination_per_hundred_rank(df_vaccination_by_country, selected_country)
 
 col1, col2 = st.columns([1,2])
 
 with col1:
 
   st.title(f'{selected_country} ranking')
-  
-  st.write(f'secured vaccine: {vaccine_per_population} doses per person')
-  st.write(f'rank: {vaccine_rank}')
 
-  st.write(f'vaccination rate: {country_vaccination}%')
-  st.write(f'rank: {vaccination_rank}')
-
-  st.write(f'fully vaccination rate: {country_fully_vaccination}%')
-  st.write(f'rank: {fully_vaccination_rank}')
+  secured_vaccine_html = f"""
+  <p class="secured-vaccine"> secured vaccine: {vaccine_per_population} doses per person </p>
+  <p class="rank">rank: {vaccine_rank}</p>
+  <p class="vaccination-rate"> vaccination rate: {country_vaccination}% </p>
+  <p class="rank"> rank: {vaccination_rank} </p>
+  <p class="fully-vaccination-rate">fully vaccination rate: {country_fully_vaccination_rate}%</p>
+  <p class="rank"> rank: {fully_vaccination_rank} </p>
+  """
+  st.markdown(secured_vaccine_html, unsafe_allow_html=True)
 
 with col2:
   # merge the data from owid-covid-data to imf data
   st.title("Secured Vaccine (courses)")
-
-  # times 1 million to calcualte the ratio in the same unit
-  secured_vaccine = df_imf[df_imf['location']==selected_country]\
-                    ['Secured Vaccine (courses)'].apply(lambda x:x*1000000)
 
   secured_vaccine_data = [population, secured_vaccine]
 
@@ -314,9 +266,9 @@ with col2:
     width=1000, height=170,
     showlegend=False,
     font=dict(
-        family="Courier New, monospace",
+        family="Roboto",
         size=18,
-        color="RebeccaPurple"
+        color="#293fe3"
       )
     )
   secured_vaccine_data_chart\
