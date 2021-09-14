@@ -7,11 +7,6 @@ import plotly.express as px
 import streamlit as st
 import utils
 
-st.set_page_config(
-  layout="wide",
-  page_title="covid insights",
-  initial_sidebar_state="expanded")
-
 # pylint: disable=W0311
 
 class Data:
@@ -19,11 +14,6 @@ class Data:
   """
   def __init__(self, data):
     self.df = pd.DataFrame(pd.read_csv(data))
-    # self.layout = st.set_page_config(
-    #                 layout="wide",
-    #                 page_title="covid insights",
-    #                 initial_sidebar_state="expanded",
-    #                 page_icon="random")
     self.location_options = pd.unique(self.df['location'])
     self.choose_location = []
     self.choosen_location = []
@@ -56,19 +46,10 @@ class Data:
     """
     return self.df
 
-# st.set_page_config(
-#   layout="wide",
-#   page_title="covid insights",
-#   initial_sidebar_state="expanded")
-
 def app():
   """The function is called by the app.py, as one of the pages of
   the application.
   """
-  # st.set_page_config(
-  #   layout="wide",
-  #   page_title="covid insights",
-  #   initial_sidebar_state="expanded")
 
   st.title("Vaccination rate over time")
 

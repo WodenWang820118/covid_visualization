@@ -14,7 +14,14 @@ class MultiApp:
       "function": func,
     })
   
+  def set_layout_config(self):
+    st.set_page_config(
+      layout="wide",
+      page_title="covid insights",
+      initial_sidebar_state="expanded")
+  
   def run(self):
+    self.set_layout_config()
     app = st.sidebar.radio(
       'Naviagtion',
       self.apps,

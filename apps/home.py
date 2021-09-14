@@ -14,17 +14,6 @@ import plotly.express as px
 import streamlit as st
 import utils
 
-# TODO: the set_page_config sometimes doesn't work as expected
-# when set the page config, the impoted pages "Vaccination rate compsrison"
-# set the page first. How to set a global layout?
-
-# image = Image.open("virus.jpg")
-
-# st.set_page_config(
-#   layout="wide",
-#   page_title="covid insights",
-#   initial_sidebar_state="expanded")
-
 # pylint: disable=W0311
 
 def app():
