@@ -3,7 +3,7 @@
   functions with docstrings. It would at some point simplify
   the layout page code for reading the layout and queries.
 """
-
+import pandas as pd
 import streamlit as st
 import numpy as np
 
@@ -77,6 +77,9 @@ def get_fully_vaccination(df_vaccination_by_country, selected_country):
 def get_population(df_imf, selected_country):
   """get the specific "population" from the imf-who-covid-19 data set.
   """
+  df_imf['Population'].replace(',','', regex=True, inplace = True) # remove comma symbol
+  # turn into int64 number type for calculation
+  df_imf['Population'] = df_imf['Population'].apply(pd.to_numeric,errors='coerce')
   return df_imf[df_imf['location']==selected_country]['Population']
 
 def get_fully_vaccination_rank(df_imf, selected_country):
