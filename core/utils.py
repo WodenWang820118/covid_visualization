@@ -91,6 +91,7 @@ def get_fully_vaccination_rank(df_imf, selected_country):
 
 def secured_vaccine_unit_change(df_imf, selected_country):
   """calculate the number of secured vaccine in to one unit.
+  Note that the data type has been modified in advance in the csv file.
   """
   return df_imf[df_imf['location']==selected_country]\
           ['Secured Vaccine (courses)'].apply(lambda x:x*1000000)

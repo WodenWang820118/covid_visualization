@@ -5,7 +5,7 @@ for visualizing the vaccinated rate over time with the selected countries.
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-import utils
+from core import utils
 
 # pylint: disable=W0311
 
@@ -50,6 +50,7 @@ def app():
   """The function is called by the app.py, as one of the pages of
   the application.
   """
+  utils.local_css("style.css")
 
   st.title("Vaccination rate over time")
 

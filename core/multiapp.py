@@ -23,7 +23,7 @@ class MultiApp:
   def run(self):
     self.set_layout_config()
     app = st.sidebar.radio(
-      'Naviagtion',
+      '',
       self.apps,
       format_func=lambda app: app['title']
     )
