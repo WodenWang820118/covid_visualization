@@ -23,7 +23,7 @@ def app():
   
   vaccination_html=f"""
   <a href="https://github.com/owid/covid-19-data/tree/master/public/data/vaccinations">
-    <h2>vaccinations</h2>
+    <h2 class="link">Vaccinations</h2>
   </a>
   """
   st.markdown(vaccination_html, unsafe_allow_html=True)
@@ -42,7 +42,7 @@ def app():
   df_imf = pd.DataFrame(imf_data)
   vaccine_secured_html=f"""
   <a href="https://www.imf.org/en/Topics/imf-and-covid19/IMF-WHO-COVID-19-Vaccine-Supply-Tracker">
-    <h2>IMF-WHO-COVID-19-Vaccine-Supply-Tracker</h2>
+    <h2 class="link">IMF WHO COVID-19 Vaccine Supply Tracker</h2>
   </a>
   """
   st.markdown(vaccine_secured_html, unsafe_allow_html=True)

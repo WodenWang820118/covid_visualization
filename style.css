@@ -1,10 +1,14 @@
+/* hide the streamlit hamburger menu */
 #MainMenu {
   visibility: hidden;
-}            
+}
+
+/* hide the streamlit default footer "made with streamlit" */
 footer {
   visibility: hidden;
 }
 
+/* st.title id is the same as the text connected by dash */
 #covid-19 {
   font-weight: 100;
   font-size:100px;
@@ -28,10 +32,41 @@ p {
   font-size: 17px;
 }
 
-/* change the select box width */
+a {
+  text-decoration: none; /* cancel the underline */
+}
+
+a:hover {
+  text-decoration: none; /* link hoverd; canel the default underline */
+}
+
+.link {
+  transition: 1s; /* 1 second of animation */
+}
+
+.link:hover {
+  color:green; /* link hovered; text get green */
+}
+
+/* change the select box properties */
 div[data-baseweb="select"]>div {
   width: 50%;
+  background-color:#fff; /* only changes the select area background color */
+  border-color:rgb(194, 189, 189);
+  font-size: 17px;
 }
+
+div[data-baseweb="select"]>span {
+  background-color:#fff;
+}
+
+/* change the tag font properties */
+span[data-baseweb="tag"]>span {
+  color: black;
+  font-size: 17px;
+  /* background-color:#fff; */
+}
+
 
 .website{
   display: block; /* default is inline, resulting bottom gap */
