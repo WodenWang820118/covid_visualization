@@ -32,3 +32,25 @@ p {
 div[data-baseweb="select"]>div {
   width: 50%;
 }
+
+.website{
+  width: 99vw;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.container {
+  width: 100vw;
+}
+
+.footer {
+  margin: 0;
+  padding-top: 15px;
+}
+
+.footer-background {
+  margin: 0;
+  background-color: #c8c9c7;
+}
+
