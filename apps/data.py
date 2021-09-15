@@ -22,7 +22,7 @@ def app():
   df = pd.DataFrame(vaccination_data)
   
   vaccination_html=f"""
-  <a href="https://github.com/owid/covid-19-data/tree/master/public/data/vaccinations">
+  <a href="https://github.com/owid/covid-19-data/tree/master/public/data/vaccinations" target="_blank">
     <h2 class="link">Vaccinations</h2>
   </a>
   """
@@ -41,7 +41,7 @@ def app():
                           skiprows=2, engine='python')
   df_imf = pd.DataFrame(imf_data)
   vaccine_secured_html=f"""
-  <a href="https://www.imf.org/en/Topics/imf-and-covid19/IMF-WHO-COVID-19-Vaccine-Supply-Tracker">
+  <a href="https://www.imf.org/en/Topics/imf-and-covid19/IMF-WHO-COVID-19-Vaccine-Supply-Tracker" target="_blank">
     <h2 class="link">IMF WHO COVID-19 Vaccine Supply Tracker</h2>
   </a>
   """
