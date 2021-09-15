@@ -34,6 +34,7 @@ div[data-baseweb="select"]>div {
 }
 
 .website{
+  display: block; /* default is inline, resulting bottom gap */
   width: 99vw;
   margin: 0;
   padding: 0;
@@ -50,6 +51,7 @@ div[data-baseweb="select"]>div {
 }
 
 .footer-background {
+  border: 0;
   margin: 0;
   background-color: #c8c9c7;
 }

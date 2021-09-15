@@ -7,3 +7,7 @@ pip install streamlit
 # Run locally
 streamlit run <filename>.py -> local URL
 
+# The dataset
+  - The dataset is about the vaccine secured and purchased around the globe.
+  - the data would be updated weekly
+  - pip install pipreqs -> pipreqs ./ (generate the requirements.txt)
