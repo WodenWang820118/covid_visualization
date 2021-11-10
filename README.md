@@ -24,7 +24,7 @@ the power of showcasing the data visualization, explorations and insights.
 
 # What are other files for apart from index.html, style.css?
   - `app.py`: the file for activating the application.
-  - `setup.sh`, `Procfile`, `requirements.txt`: for website development.
+  - `setup.sh`, `Procfile`, `requirements.txt`: for website deployment.
 
 
 
